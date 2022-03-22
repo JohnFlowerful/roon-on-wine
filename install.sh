@@ -124,21 +124,24 @@ chmod +x ./start_my_roon_instance.sh
 cp ./start_my_roon_instance.sh ~
 
 # create XDG stuff
-cat << _EOF2_ > ${HOME}/.local/share/applications/roon-on-wine.desktop
+cat << EOF > ~/.local/share/applications/roon.desktop
 [Desktop Entry]
 Name=Roon
-Exec=${HOME}/start_my_roon_instance.sh
+GenericName=Music streaming and management
+Exec=~/.local/bin/start_roon.sh
 Terminal=false
 Type=Application
 StartupNotify=true
-Icon=0369_Roon.0
+Icon=roon-Roon
 StartupWMClass=roon.exe
-_EOF2_
+Categories=AudioVideo;Audio
+EOF
 
-cp ./icons/16x16/roon-on-wine.png ${HOME}/.local/share/icons/hicolor/16x16/apps/0369_Roon.0.png
-cp ./icons/32x32/roon-on-wine.png ${HOME}/.local/share/icons/hicolor/32x32/apps/0369_Roon.0.png
-cp ./icons/48x48/roon-on-wine.png ${HOME}/.local/share/icons/hicolor/48x48/apps/0369_Roon.0.png
-cp ./icons/256x256/roon-on-wine.png ${HOME}/.local/share/icons/hicolor/256x256/apps/0369_Roon.0.png
+# add icons
+xdg-icon-resource install --context apps --size 16 ./icons/16x16.png roon-Roon
+xdg-icon-resource install --context apps --size 32 ./icons/32x32.png roon-Roon
+xdg-icon-resource install --context apps --size 48 ./icons/32x32.png roon-Roon
+xdg-icon-resource install --context apps --size 256 ./icons/256x256.png roon-Roon
 
 # refresh XDG stuff
 update-desktop-database ~/.local/share/applications
