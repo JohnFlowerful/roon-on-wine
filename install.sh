@@ -8,7 +8,7 @@ test "$WINE_PLATFORM" = "win32" && ROON_DOWNLOAD="http://download.roonlabs.com/b
 SET_SCALEFACTOR=1
 VERBOSE=0
 
-PREFIX="~/$WIN_ROON_DIR"
+PREFIX=~/$WIN_ROON_DIR
 
 check_executable() {
 	local exe=$1
