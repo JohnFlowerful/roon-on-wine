@@ -60,28 +60,18 @@ check_executable xdotool
 rm -rf $PREFIX
 _wine "Setup Wine bottle" wineboot --init
 
-# installing .NET needs to be done in a few steps; if we do this at once it fails on a few systems
-
-#_winetricks "Installing .NET 2.0"    -q dotnet20
-#_winetricks "Installing .NET 3.0"    -q dotnet30sp1
-#_winetricks "Installing .NET 3.5"    -q dotnet35
-_winetricks "Installing .NET 4.0"    -q --force dotnet40
-#_winetricks "Installing .NET 4.5"    -q --force dotnet45
-#_winetricks "Installing .NET 4.5.2"  -q --force dotnet452
-#_winetricks "Installing .NET 4.6.2"  -q dotnet462
-#_winetricks "Installing .NET 4.7.2"  -q dotnet472
+# using 4.7.2 here as 4.8 causes window border and title bar to disappear sometimes
+# as a side: installing 4.7.2 with winetricks appears slower than installing 4.5.2
+# and running the 4.7.2 installer directly
+_winetricks "Installing .NET 4.7.2"  -q --force dotnet472
 #_winetricks "Installing .NET 4.8"    -q dotnet48
 
 # setting some environment stuff
-_winetricks "Setting Windows version to 7" -q win7
+_winetricks "Setting Windows version to 10" -q win10 # windows 10 is required for roon 2.0
 _winetricks "Setting DDR to OpenGL"        -q ddr=opengl
 _winetricks "Setting sound to ALSA"        -q sound=alsa
 #_winetricks "Setting sound to Pulseaudio"  -q sound=pulse # roon doesn't support pulse
 _winetricks "Disabling crash dialog"       -q nocrashdialog
-
-rm -f ./NDP472-KB4054530-x86-x64-AllOS-ENU.exe
-wget 'https://download.visualstudio.microsoft.com/download/pr/1f5af042-d0e4-4002-9c59-9ba66bcf15f6/089f837de42708daacaae7c04b7494db/ndp472-kb4054530-x86-x64-allos-enu.exe' -O ./NDP472-KB4054530-x86-x64-AllOS-ENU.exe
-_wine "Installing .NET..." ./NDP472-KB4054530-x86-x64-AllOS-ENU.exe /q
 
 sleep 2
 
