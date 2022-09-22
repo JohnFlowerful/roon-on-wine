@@ -71,10 +71,10 @@ _winetricks "Installing .NET 4.8"    -q dotnet48
 
 # setting some environment stuff
 _winetricks "Setting Windows version to 10" -q win10 # windows 10 is required for roon 2.0
-_winetricks "Setting DDR to OpenGL"        -q ddr=opengl
-_winetricks "Setting sound to ALSA"        -q sound=alsa
-#_winetricks "Setting sound to Pulseaudio"  -q sound=pulse # roon doesn't support pulse
-_winetricks "Disabling crash dialog"       -q nocrashdialog
+_winetricks "Setting DDR to OpenGL"         -q ddr=opengl
+_winetricks "Setting sound to ALSA"         -q sound=alsa
+#_winetricks "Setting sound to Pulseaudio"   -q sound=pulse # roon doesn't support pulse
+_winetricks "Disabling crash dialog"        -q nocrashdialog
 
 sleep 2
 
