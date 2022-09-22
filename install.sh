@@ -143,7 +143,7 @@ EOF
 # add icons
 xdg-icon-resource install --context apps --size 16 ./icons/16x16.png roon-Roon
 xdg-icon-resource install --context apps --size 32 ./icons/32x32.png roon-Roon
-xdg-icon-resource install --context apps --size 48 ./icons/32x32.png roon-Roon
+xdg-icon-resource install --context apps --size 48 ./icons/48x48.png roon-Roon
 xdg-icon-resource install --context apps --size 256 ./icons/256x256.png roon-Roon
 
 # refresh XDG stuff
