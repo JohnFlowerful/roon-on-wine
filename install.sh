@@ -5,10 +5,9 @@ WIN_ROON_DIR=".roon"
 ROON_DOWNLOAD="http://download.roonlabs.com/builds/RoonInstaller64.exe"
 WINE_PLATFORM="win64"
 test "$WINE_PLATFORM" = "win32" && ROON_DOWNLOAD="http://download.roonlabs.com/builds/RoonInstaller.exe"
-SET_SCALEFACTOR=1
-VERBOSE=0
+PREFIX="${HOME}/$WIN_ROON_DIR"
 
-PREFIX=~/$WIN_ROON_DIR
+VERBOSE=0
 
 check_executable() {
 	local exe=$1
@@ -19,6 +18,12 @@ check_executable() {
 		echo
 		exit 1
 	fi
+}
+
+_winepath() {
+	env WINEARCH=$WINE_PLATFORM WINEPREFIX=$PREFIX winepath "$@"
+
+	sleep 2
 }
 
 _winetricks() {
@@ -37,12 +42,16 @@ _winetricks() {
 _wine() {
 	comment="$1"
 	shift
-	echo "[$WINE_PLATFORM|$PREFIX] $comment ..."
+
+	# Require this clause for determing LocalAppData path properly. 
+	# The comment would be included in the path; otherwise
+	if [ ${#comment} -gt 0 ]; then
+		echo "[${WINE_PLATFORM}|${PREFIX}] $comment ..."
+	fi
+
 	if [ $VERBOSE -eq 1 ]; then
-		#env WINEARCH=$WINE_PLATFORM WINEPREFIX=$PREFIX wine "$@"
 		env WINEARCH=$WINE_PLATFORM WINEPREFIX=$PREFIX WINEDLLOVERRIDES=winemenubuilder.exe=d wine "$@"
 	else
-		#env WINEARCH=$WINE_PLATFORM WINEPREFIX=$PREFIX wine "$@" >/dev/null 2>&1
 		env WINEARCH=$WINE_PLATFORM WINEPREFIX=$PREFIX WINEDLLOVERRIDES=winemenubuilder.exe=d wine "$@" >/dev/null 2>&1
 	fi
 
@@ -85,26 +94,39 @@ test -f $(basename $ROON_DOWNLOAD) || wget $ROON_DOWNLOAD
 # install Roon
 _wine "Installing Roon" $(basename $ROON_DOWNLOAD)
 
+mkdir -p ~/.local/bin
+
+# Preconditions for start script. 
+# Need a properly formatted path to the user's Roon.exe in their wine configuration
+# Get the Windows OS formatted path to the user's Local AppData folder
+WINE_LOCALAPPDATA=$( _wine '' cmd.exe /c echo %LocalAppData% )
+# Convert Windows OS formatted path to Linux formatted path from the user's wine configuration
+UNIX_LOCALAPPDATA="$( _winepath -u $WINE_LOCALAPPDATA )"
+# Windows line endings carry through winepath conversion. Remove it to get an error free path.
+UNIX_LOCALAPPDATA=${UNIX_LOCALAPPDATA%$'\r'} # remove ^M
+ROONEXE="Roon/Application/Roon.exe"
+
+# Preconditions for start script met.
 # create start script
-cat << EOF > ./start_roon.sh
+cat << EOF > ~/.local/bin/start_roon.sh
 #!/bin/bash
 
-SET_SCALEFACTOR=$SET_SCALEFACTOR
+# This parameter influences the scale at which
+# the Roon UI is rendered.
+#
+# 1.0 is default, but on an UHD screen this should be 1.5 or 2.0
+#
+SCALEFACTOR=1.0
 
 PREFIX="$PREFIX"
-EXE="\$PREFIX/drive_c/users/$USER/AppData/Local/Roon/Application/Roon.exe"
-if [ \$SET_SCALEFACTOR -eq 1 ]; then
-	env WINEPREFIX=\$PREFIX wine "\$EXE" -scalefactor=1
-else
-	env WINEPREFIX=\${PREFIX} wine "\$EXE"
-fi
+EXE=${UNIX_LOCALAPPDATA}/${ROONEXE}
+env WINEPREFIX=\$PREFIX wine \$EXE -scalefactor=\$SCALEFACTOR
 EOF
 
-chmod +x ./start_roon.sh
-cp ./start_roon.sh ~/.local/bin/start_roon.sh
+chmod +x ~/.local/bin/start_roon.sh
 
 # create simple media controls
-cat << EOF > ./roon_control.sh
+cat << EOF > ~/.local/bin/roon_control.sh
 #!/bin/sh
 
 case \$1 in
@@ -126,8 +148,7 @@ xdotool key --window \$(xdotool search --name "Roon" | head -n1) \$key
 exit
 EOF
 
-chmod +x ./roon_control.sh
-cp ./roon_control.sh ~/.local/bin/roon_control.sh
+chmod +x ~/.local/bin/roon_control.sh
 
 # create XDG stuff
 cat << EOF > ~/.local/share/applications/roon.desktop
