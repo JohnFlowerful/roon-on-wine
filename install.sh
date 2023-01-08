@@ -108,7 +108,7 @@ cat << EOF > ~/.local/bin/start_roon.sh
 # the Roon UI is rendered.
 #
 # 1.0 is default, but on an UHD screen this should be 1.5 or 2.0
-#
+
 SCALEFACTOR=1.0
 
 PREFIX="$PREFIX"
@@ -164,5 +164,9 @@ xdg-icon-resource install --context apps --size 256 ./icons/256x256.png roon-Roo
 # refresh XDG stuff
 update-desktop-database ~/.local/share/applications
 gtk-update-icon-cache
+
+echo
+echo "DONE!"
+echo
 
 exit 0
