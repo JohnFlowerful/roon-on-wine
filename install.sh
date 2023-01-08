@@ -94,7 +94,7 @@ mkdir -p ~/.local/bin
 # Get the Windows OS formatted path to the user's Local AppData folder
 WINE_LOCALAPPDATA=$($WINE_ENV wine cmd.exe /c echo %LocalAppData% 2> /dev/null)
 # Convert Windows OS formatted path to Linux formatted path from the user's wine configuration
-UNIX_LOCALAPPDATA="$($WINE_ENV winepath -u $WINE_LOCALAPPDATA)"
+UNIX_LOCALAPPDATA="$($WINE_ENV winepath -u "$WINE_LOCALAPPDATA")"
 # Windows line endings carry through winepath conversion. Remove it to get an error free path.
 UNIX_LOCALAPPDATA=${UNIX_LOCALAPPDATA%$'\r'} # remove ^M
 ROONEXE="Roon/Application/Roon.exe"
