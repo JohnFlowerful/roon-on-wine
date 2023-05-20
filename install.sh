@@ -61,14 +61,9 @@ check_executable xdotool
 rm -rf $PREFIX
 _wine "Setup Wine bottle" wineboot --init
 
-# try using 4.7.2 here if 4.8 causes window border and title bar to disappear
-# starting with start_roon.sh appears to fix it for every subsequent launch
-#
-# as a side: installing 4.7.2 with winetricks appears slower than installing 4.5.2
-# and running the 4.7.2 installer directly
-# also: a hang occurs when installing 4.7.2 with winetricks. try setting VERBOSE=1
 #_winetricks "Installing .NET 4.7.2"  -q --force dotnet472
-_winetricks "Installing .NET 4.8"    -q dotnet48
+#_winetricks "Installing .NET 4.8"    -q dotnet48
+_winetricks "Installing .NET 6.0"    -q dotnet6
 
 # setting some environment stuff
 _winetricks "Setting Windows version to 10" -q win10 # windows 10 is required for roon 2.0
@@ -113,7 +108,7 @@ SCALEFACTOR=1.0
 
 PREFIX="$PREFIX"
 EXE="${UNIX_LOCALAPPDATA}/${ROONEXE}"
-env WINEPREFIX=\$PREFIX wine \$EXE -scalefactor=\$SCALEFACTOR
+env WINEPREFIX=\$PREFIX WINEDEBUG=fixme-all wine \$EXE -scalefactor=\$SCALEFACTOR
 EOF
 chmod +x ~/.local/bin/start_roon.sh
 
